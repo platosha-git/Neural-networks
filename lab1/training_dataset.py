@@ -10,7 +10,7 @@ def read_dataset():
     with gzip.open('train-labels-idx1-ubyte.gz') as train_labels:
         data_from_train_file = train_labels.read()
 
-    # Пропускаем первые 8 байт
+    # Пропускаем первые 8 байт (метаданные)
     label_data = data_from_train_file[8:]
     assert len(label_data) == 60000
 
@@ -22,7 +22,7 @@ def read_dataset():
 
     images = []
 
-    # Перебор тренировочного файла и читение одного изображения за раз
+    # Перебор тренировочного файла и чтение одного изображения за раз
     with gzip.open('train-images-idx3-ubyte.gz') as train_images:
         train_images.read(4 * 4)
         for _ in range(60000):

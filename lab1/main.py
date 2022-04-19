@@ -5,7 +5,7 @@ from training_dataset import NUMBER_COUNT, read_dataset, SIZE_OF_ONE_IMAGE
 
 def train_perceptron(X_train, y_train):
     input_count = SIZE_OF_ONE_IMAGE
-    network = Perceptron(NUMBER_COUNT, input_count, a_neurons_count=10000)
+    network = Perceptron(NUMBER_COUNT, input_count, a_neurons_count=1000)
     network.train(X_train, y_train)
     network.optimize(X_train)
     return network
@@ -21,7 +21,7 @@ def test_network(network, X_test, y_test):
                 misc += 1
 
     print(
-        '\nТочность на тестовых данных: {:.2f}%'.format(
+        '\nТочность на тестовых данных: {:.1f}%'.format(
             float(total_classifications - misc) / total_classifications * 100
         )
     )
