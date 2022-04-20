@@ -21,7 +21,7 @@ def test_network(network, X_test, y_test):
                 misc += 1
 
     print(
-        '\nТочность на тестовых данных: {:.1f}%'.format(
+        'Точность на тестовых данных: {:.1f}%'.format(
             float(total_classifications - misc) / total_classifications * 100
         )
     )

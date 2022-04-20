@@ -96,5 +96,4 @@ class Perceptron:
                 for j in range(len(self.r_layer.neurons)):
                     del self.r_layer.neurons[j].input_weights[i]
 
-        print('Удалили все мертвые и коррелирующие нейроны')
-        print('Осталось {:d} нейронов'.format(len(self.a_layer.neurons)))
+        print('\t{:d} нейронов осталось'.format(len(self.a_layer.neurons)))
