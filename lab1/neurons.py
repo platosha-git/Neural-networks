@@ -72,8 +72,10 @@ class RNeuron(ActivationNeuron):
             if self.last_result == 0:
                 lr = -1
             delta_weight = [lr * last_input for last_input in self.last_inputs]
+            
             self.input_weights = [
                 input_weight - delta_weight * self.learning_speed
                 for input_weight, delta_weight in zip(self.input_weights, delta_weight)
             ]
             self.bias += lr * self.learning_speed
+            
