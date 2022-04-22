@@ -9,9 +9,12 @@ def main():
     
     per = Perceptron(NUM_OF_COUNTS, SIZE_OF_ONE_IMAGE, 1000)
     
+    print('Обучение:')
     per.train(X_train, y_train)
+    
+    print('\nОптимизация:')
     per.optimize(X_train)
-    per.test(X_test, y_test)
+    #per.test(X_test, y_test)
 
 
 if __name__ == '__main__':
