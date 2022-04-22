@@ -15,7 +15,8 @@ def main():
     
     print('\nОптимизация:')
     per.optimize(X_train, CORR_COEF)
-    
+
+    print('\nТестирование:')
     per.test(X_test, y_test)
 
 

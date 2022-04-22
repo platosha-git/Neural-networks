@@ -9,6 +9,7 @@ class Perceptron:
         self.a_neurons = init_a_neurons(a_size, s_size)
         self.r_neurons = init_r_neurons(r_size, a_size, learning_speed)
 
+
 #TRAIN
     def s_solve(self, inputs):
         result = []
@@ -108,17 +109,14 @@ class Perceptron:
 
 
     def test(self, X_test, y_test):
-        assert len(X_test) == len(y_test)
-        total_classifications = len(y_test) * len(y_test[0])
-        misc = 0
-        for i in range(len(X_test)):
-            results = self.solve(X_test[i])
-            for result, expected_result in zip(results, y_test[i]):
-                if result != expected_result:
-                    misc += 1
+        results = len(y_test) * len(y_test[0])
+        mistackes = 0
 
-        print(
-            '\nТочность на тестовых данных: {:.1f}%'.format(
-                float(total_classifications - misc) / total_classifications * 100
-            )
-        )
+        for i in range(len(X_test)):
+            y_actual = self.solve(X_test[i])
+            for act_result, expected_result in zip(y_actual, y_test[i]):
+                if act_result != expected_result:
+                    mistackes += 1
+
+        accuracy = float(results - mistackes) / results * 100
+        print('\tТочность: ' + str(round(accuracy, 1)) + '%')
