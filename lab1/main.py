@@ -1,11 +1,12 @@
+from dataset import get_dataset, NUM_OF_COUNTS, SIZE_OF_ONE_IMAGE
 from sklearn.model_selection import train_test_split
-
 from perceptron import Perceptron
-from training_dataset import NUMBER_COUNT, read_dataset, SIZE_OF_ONE_IMAGE
+
+import matplotlib as plt
 
 def train_perceptron(X_train, y_train):
     input_count = SIZE_OF_ONE_IMAGE
-    network = Perceptron(NUMBER_COUNT, input_count, a_neurons_count=1000)
+    network = Perceptron(NUM_OF_COUNTS, input_count, a_neurons_count=1000)
     network.train(X_train, y_train)
     network.optimize(X_train)
     return network
@@ -28,8 +29,8 @@ def test_network(network, X_test, y_test):
 
 
 def main():
-    images, labels, = read_dataset()
-    X_train, X_test, y_train, y_test = train_test_split(images, labels, test_size=10, train_size=15)
+    labels, images = get_dataset()
+    X_train, X_test, y_train, y_test = train_test_split(images, labels, test_size=15, train_size=25)
     network = train_perceptron(X_train, y_train)
     test_network(network, X_test, y_test)
 
