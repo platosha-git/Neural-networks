@@ -17,6 +17,13 @@ class SNeuron(Neuron):
     def solve(self, inputs):
         return self.activate(inputs)
 
+def init_s_neurons(size):
+    neurons = []
+    for i in range(size):
+        neuron = SNeuron(None, lambda value: value)
+        neurons.append(neuron)
+    return neurons
+
 
 class ActivationNeuron(Neuron):
     def __init__(self, f_initialize, f_activate, inputs_count):
@@ -57,6 +64,13 @@ class ANeuron(ActivationNeuron):
     def get_weights(self, count):
         return [random.choice([-1, 0, 1]) for _ in range(count)]
 
+def init_a_neurons(size, s_size):
+    neurons = []
+    for i in range(size):
+        neuron = ANeuron(None, lambda value: int(value >= 0), s_size)
+        neurons.append(neuron)
+    return neurons
+
 
 class RNeuron(ActivationNeuron):
     def __init__(self, f_initialize, f_activate, inputs_count, learning_speed, bias):
@@ -78,4 +92,11 @@ class RNeuron(ActivationNeuron):
                 for input_weight, delta_weight in zip(self.input_weights, delta_weight)
             ]
             self.bias += lr * self.learning_speed
+
+def init_r_neurons(size, a_size, learning_speed):
+    neurons = []
+    for i in range(size):
+        neuron = RNeuron(lambda: 0, lambda value: 1 if value >= 0 else 0, a_size, learning_speed, bias=0)
+        neurons.append(neuron)
+    return neurons
             
