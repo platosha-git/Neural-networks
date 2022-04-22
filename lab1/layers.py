@@ -1,29 +1,11 @@
 from neurons import *
 
-
-class NeuronLayer:
-    def __init__(self):
+class SLayer():
+    def __init__(self, size):
         self.neurons = []
-
-    def solve(self, inputs):
-        results = []
-        for neuron in self.neurons:
-            results.append(neuron.solve(inputs))
-        return results
-
-    def correct(self, expected_results):
-        pass
-
-
-class SNeuronLayer(NeuronLayer):
-    def __init__(self, neurons_count):
-        super().__init__()
-        for _ in range(neurons_count):
-            self.add_neuron(None, lambda value: value)
-
-    def add_neuron(self, f_initialize, f_activate):
-        neuron = SNeuron(f_initialize, f_activate)
-        self.neurons.append(neuron)
+        for i in range(size):
+            neuron = SNeuron(None, lambda value: value)
+            self.neurons.append(neuron)
 
     def solve(self, inputs):
         results = []
@@ -32,30 +14,32 @@ class SNeuronLayer(NeuronLayer):
         return results
 
 
-class ANeuronLayer(NeuronLayer):
-    def __init__(self, neurons_count, inputs_count):
-        super().__init__()
-        for _ in range(neurons_count):
-            self.add_neuron(inputs_count, None, lambda value: int(value >= 0))
+class ALayer():
+    def __init__(self, size, s_size):
+        self.neurons = []
+        for i in range(size):
+            neuron = ANeuron(None, lambda value: int(value >= 0), s_size)
+            self.neurons.append(neuron)
 
-    def add_neuron(self, inputs_count, f_initialize, f_activate):
-        neuron = ANeuron(f_initialize, f_activate, inputs_count)
-        self.neurons.append(neuron)
+    def solve(self, inputs):
+        results = []
+        for neuron in self.neurons:
+            results.append(neuron.solve(inputs))
+        return results
 
 
-class RNeuronLayer(NeuronLayer):
-    def __init__(self, neurons_count, a_neurons_count, learning_speed):
-        super().__init__()
-        for _ in range(neurons_count):
-            self.add_neuron(lambda: 0,
-                            lambda value: 1 if value >= 0 else 0,
-                            a_neurons_count,
-                            learning_speed,
-                            bias=0)
+class RLayer():
+    def __init__(self, size, a_size, learning_speed):
+        self.neurons = []
+        for i in range(size):
+            neuron = RNeuron(lambda: 0, lambda value: 1 if value >= 0 else 0, a_size, learning_speed, bias=0)
+            self.neurons.append(neuron)
 
-    def add_neuron(self, f_initialize, f_activate, inputs_count, learning_speed, bias):
-        neuron = RNeuron(f_initialize, f_activate, inputs_count, learning_speed, bias)
-        self.neurons.append(neuron)
+    def solve(self, inputs):
+        results = []
+        for neuron in self.neurons:
+            results.append(neuron.solve(inputs))
+        return results
 
     def correct(self, expected_results):
         for neuron, expected_result in zip(self.neurons, expected_results):

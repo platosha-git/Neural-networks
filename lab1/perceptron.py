@@ -3,13 +3,10 @@ import pandas as pd
 from scipy.stats import pearsonr
 
 class Perceptron:
-    def __init__(self, numbers_count, inputs_count, learning_speed=0.01, a_neurons_count=5000):
-        print('Генерируем слой S (сенсорный)')
-        self.s_layer = SNeuronLayer(inputs_count)
-        print('Генерируем слой A (ассоциативный)')
-        self.a_layer = ANeuronLayer(a_neurons_count, inputs_count)
-        print('Генерируем слой R (реагирующий)')
-        self.r_layer = RNeuronLayer(numbers_count, a_neurons_count, learning_speed)
+    def __init__(self, num_of_counts, s_size, a_size, learning_speed=0.01):
+        self.s_layer = SLayer(s_size)
+        self.a_layer = ALayer(a_size, s_size)
+        self.r_layer = RLayer(num_of_counts, a_size, learning_speed)
 
     def solve(self, inputs):
         s_result = self.s_layer.solve(inputs)
@@ -20,8 +17,7 @@ class Perceptron:
         self.r_layer.correct(expected_results)
 
     def train(self, X_train, y_train):
-        assert len(X_train) == len(y_train)
-        print('\n Обучение')
+        print('Обучение')
 
         continue_training = True
         epoch = 0
