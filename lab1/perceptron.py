@@ -116,3 +116,19 @@ class Perceptron:
 
         print('Удалили все мертвые и коррелирующие нейроны')
         print('Осталось {:d} нейронов'.format(len(self.a_layer.neurons)))
+
+    def test(self, X_test, y_test):
+        assert len(X_test) == len(y_test)
+        total_classifications = len(y_test) * len(y_test[0])
+        misc = 0
+        for i in range(len(X_test)):
+            results = self.solve(X_test[i])
+            for result, expected_result in zip(results, y_test[i]):
+                if result != expected_result:
+                    misc += 1
+
+        print(
+            'Точность на тестовых данных: {:.1f}%'.format(
+                float(total_classifications - misc) / total_classifications * 100
+            )
+        )
