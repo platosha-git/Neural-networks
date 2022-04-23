@@ -19,7 +19,7 @@ def init_a_neurons(size, s_size):
 def init_r_neurons(size, a_size, learning_speed):
     neurons = []
     for i in range(size):
-        neuron = RNeuron(lambda: 0, lambda value: int(value >= 0), a_size, learning_speed)
+        neuron = RNeuron(lambda: 0, lambda value: 1 if (value >= 0) else 0, a_size, learning_speed)
         neurons.append(neuron)
     return neurons
 
@@ -70,13 +70,13 @@ class RNeuron():
         self.initialize = f_initialize
         self.activate = f_activate
         self.input_weights = self.get_weights(inputs_count)
+        self.learning_speed = learning_speed
         self.last_inputs = None
         self.last_result = None
-        self.learning_speed = learning_speed
         self.bias = bias
 
     def accumulate(self, inputs):
-        accumulation = - self.bias
+        accumulation = -self.bias
         for value, weight in zip(inputs, self.input_weights):
             accumulation += value * weight
         return accumulation

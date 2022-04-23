@@ -1,5 +1,4 @@
 from neurons import *
-import pandas as pd
 from scipy.stats import pearsonr
 
 
@@ -37,21 +36,21 @@ class Perceptron:
 
     def train(self, X_train, y_train):
         epoch = 0
-        mistackes = -1
+        mistakes = -1
 
-        while (mistackes != 0):
-            mistackes = 0
+        while (mistakes != 0):
+            mistakes = 0
 
             for i in range(len(y_train)):
                 results = self.solve(X_train[i])
 
                 for result, expected_result in zip(results, y_train[i]):
                     if result != expected_result:
-                        mistackes += 1
+                        mistakes += 1
                         self.correct(y_train[i])
 
             epoch += 1
-            print('\tЭпоха ' + str(epoch) + '. Ошибок: ' + str(mistackes))
+            print('\tЭпоха ' + str(epoch) + '. Ошибок: ' + str(mistakes))
 
 
 #OPTIMIZE
@@ -110,13 +109,13 @@ class Perceptron:
 
     def test(self, X_test, y_test):
         results = len(y_test) * len(y_test[0])
-        mistackes = 0
+        mistakes = 0
 
         for i in range(len(X_test)):
             y_actual = self.solve(X_test[i])
             for act_result, expected_result in zip(y_actual, y_test[i]):
                 if act_result != expected_result:
-                    mistackes += 1
+                    mistakes += 1
 
-        accuracy = float(results - mistackes) / results * 100
+        accuracy = float(results - mistakes) / results * 100
         print('\tТочность: ' + str(round(accuracy, 1)) + '%')
