@@ -1,7 +1,5 @@
 import struct
 import numpy as np
-import gzip
-from sklearn.preprocessing import OneHotEncoder
 
 
 LABELS_FILE_TRAIN = './MNIST/train-labels-idx1-ubyte'
