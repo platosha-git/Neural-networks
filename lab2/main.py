@@ -1,28 +1,8 @@
-import struct
-import numpy as np
 import matplotlib.pyplot as plt
 import os
 from datetime import datetime
-
-path = './MNIST'
-
-def read_idx(filename):
-    with open(filename, 'rb') as f:
-        zero, data_type, dims = struct.unpack('>HBB', f.read(4))
-        shape = tuple(struct.unpack('>I', f.read(4))[0] for d in range(dims))
-        return np.fromstring(f.read(), dtype=np.uint8).reshape(shape)
-    
-
-def oneHotEncoding(label):
-    n = np.max(label)+1
-    v = np.eye(n)[label]
-    return v.T
-
-
-def imageProcess(data):
-    data = data/255
-    data = data.reshape(data.shape[0],data.shape[1]*data.shape[2])
-    return data.T
+from dataset import get_dataset
+import numpy as np
 
 
 def softMax(X):
@@ -101,47 +81,48 @@ def classifer(X, params, activation):
     return pred
 
 
-# Load Data to memory and define hyper params
-X_train = imageProcess(read_idx(path + '/train-images.idx3-ubyte'))
-y_train = oneHotEncoding(read_idx(path + '/train-labels-idx1-ubyte'))
-X_test = imageProcess(read_idx(path + '/t10k-images-idx3-ubyte'))
-y_test = read_idx(path + '/t10k-labels-idx1-ubyte')
+def main():
+    X_train, X_test, y_train, y_test = get_dataset()
 
 
-m = 10000
-n_x = X_train.shape[0]
-n_h = 100
-eta = 1
-lamda = 2
-np.random.seed(7)
-epoch = 100
+    m = 10000
+    n_x = X_train.shape[0]
+    n_h = 100
+    eta = 1
+    lamda = 2
+    np.random.seed(7)
+    epoch = 300
 
 
-tanhParams = {  'W1': np.random.randn(n_h, n_x)* np.sqrt(1. / n_x),
-                'b1': np.zeros((n_h, 1)),
-                'W2': np.random.randn(10, n_h)* np.sqrt(1. / n_h),
-                'b2': np.zeros((10, 1))
-            }
+    tanhParams = {  'W1': np.random.randn(n_h, n_x)* np.sqrt(1. / n_x),
+                    'b1': np.zeros((n_h, 1)),
+                    'W2': np.random.randn(10, n_h)* np.sqrt(1. / n_h),
+                    'b2': np.zeros((10, 1))
+                }
 
-print('Обучение:')
-for i in range(epoch):
-    idx = np.random.permutation(X_train.shape[1])[:m]
-    X=X_train[:,idx]
-    y=y_train[:,idx]
-    
-    forwardPass = forward(X,tanhParams,tanh)
+    print('Обучение:')
+    for i in range(epoch):
+        idx = np.random.permutation(X_train.shape[1])[:m]
+        X=X_train[:,idx]
+        y=y_train[:,idx]
+        
+        forwardPass = forward(X,tanhParams,tanh)
 
-    gradient = back(X, y, forwardPass, tanhParams,dTanh)
-    tanhParams=updater(tanhParams,gradient,eta,lamda,m)
+        gradient = back(X, y, forwardPass, tanhParams,dTanh)
+        tanhParams=updater(tanhParams,gradient,eta,lamda,m)
 
-    if i % 10 == 0:
-        print(f'\tЭпоха {i}.')
+        if i % 10 == 0:
+            print(f'\tЭпоха {i}.')
 
 
-y_hat = classifer(X_test, tanhParams, tanh)
+    y_hat = classifer(X_test, tanhParams, tanh)
 
-print(
-        '\nТочность на тестовых данных: {:.2f}%'.format(
-            sum(y_hat==y_test) * 1 / len(y_test) * 100
+    print(
+            '\nТочность на тестовых данных: {:.2f}%'.format(
+                sum(y_hat==y_test) * 1 / len(y_test) * 100
+            )
         )
-    )
+
+
+if __name__ == '__main__':
+    main()
