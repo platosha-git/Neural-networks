@@ -1,120 +1,45 @@
 import numpy as np
+from base import *
 
 class MultiPerceptron():
-    def __init__(self, n_x):
-        self.m = 10000  # batch size  10000
-        self.n_x = n_x # размерность входного слоя (784)
-        self.n_h = 100  # размерность скрытого слоя 100
-        self.eta =1  # скорость обучения
-        self.epoch = 300  # количество эпох 300
+    def __init__(self, s_size):
+        self.m = M
 
-        self.params = {'W1': np.random.randn(self.n_h, self.n_x) * np.sqrt(1. / self.n_x),  # веса от входного слоя к скрытому (матрица)
-                      'b1': np.zeros((self.n_h, 1)),
-                      'W2': np.random.randn(10, self.n_h) * np.sqrt(1. / self.n_h),
-                      'b2': np.zeros((10, 1))
-                  }
+        self.s_size = s_size
+        self.a_size = A_SIZE
+        self.r_size = R_SIZE
 
-    def train(self, X_train, y_train, X_test, y_test):
-        stab_time = 0
-        error_pred = 10**9
-        i = 0
-        while stab_time < 10 and i < self.epoch:
-            # перемешивание паттернов на каждой эпохе, чтоб не было зависимости обучения от порядка паттернов
-            idx = np.random.permutation(X_train.shape[1])[:self.m]
-            X = X_train[:, idx]  # известные входы
-            y = y_train[:, idx]  # известные выходы для входов выше   784 yf 10.000
-            # полуаем ответ от нейронки - прямой ход нейросети и сохраняет промежуточ знач-я нейросети
-            forwardPass = self.forward(X)
-            # обратное распространение ошибки - получаем коэфф для изменения
-            gradient = self.back(X, y, forwardPass, i)
-            # updating weights
-            self.params = self.updater(gradient)
-            if i % 10 == 0:
-                print(f"Завершена эпоха {i}")
-            i += 1
+        self.eta = 1
+        self.epoch = 300
 
-            # проверяем результат на тест выборке
-            if i > 100:
-                y_net_test = self.forward(X_test)['A2']
-                error = np.sum(np.abs(y_net_test - y_test))
-                if error >= error_pred:
-                    stab_time += 1
-                else:
-                    stab_time = 0
-                error_pred = error
+        self.params = define_sigParams(self.s_size, self.a_size, self.r_size)
 
 
-        print(f"Завершена эпоха {self.epoch}")
-
-        # for i in range(self.epoch):
-        #     # перемешивание паттернов на каждой эпохе, чтоб не было зависимости обучения от порядка паттернов
-        #     idx = np.random.permutation(X_train.shape[1])[:self.m]
-        #     X = X_train[:, idx]  # известные входы
-        #     y = y_train[:, idx]  # известные выходы для входов выше   784 yf 10.000
-        #     # print('X:', len(X), len(X[0]))
-        #     # полуаем ответ от нейронки - прямой ход нейросети и сохраняет промежуточ знач-я нейросети
-        #     forwardPass = self.forward(X)
-        #     # обратное распространение ошибки - получаем коэфф для изменения
-        #     gradient = self.back(X, y, forwardPass)
-        #     # updating weights
-        #     self.params = self.updater(gradient)
-        #     if i % 10 == 0:
-        #         print(f"Завершена эпоха {i}")
-        # print(f"Завершена эпоха {self.epoch}")
-
-    def test(self, X_test, y_test):
-        Z1 = np.matmul(self.params['W1'], X_test) + self.params['b1']
-        A1 = self.sigmoid(Z1)
-        Z2 = np.matmul(self.params['W2'], A1) + self.params['b2']
-        A2 = self.sigmoid(Z2) # выход нйросети
-        pred = np.argmax(A2, axis=0)
-        
-        print('Accuracy:', sum(pred == y_test) * 1 / len(y_test))
-
-        return pred
-
-    def sigmoid(self, z):
-        return 1. / (1. + np.exp(-z))
-
-    # производная сигмоиды
-    def dSigmoid(self, z):
-        return self.sigmoid(z) * (1 - self.sigmoid(z))
-    # прямой ход вычислений
+#TRAIN
     def forward(self, X):
         forwardPass = {}
         forwardPass['Z1'] = np.matmul(self.params['W1'], X) + self.params['b1']
-        forwardPass['A1'] = self.sigmoid(forwardPass['Z1'])
+        forwardPass['A1'] = sigmoid(forwardPass['Z1'])
         forwardPass['Z2'] = np.matmul(self.params['W2'], forwardPass['A1']) + self.params['b2']
-        forwardPass['A2'] = self.sigmoid(forwardPass['Z2'])     
+        forwardPass['A2'] = sigmoid(forwardPass['Z2'])     
         return forwardPass
 
-    # обратное распространение ошибки
     def back(self, X, y, forwardPass, epoch):
-        m = X.shape[1] # размер паттернов
+        m = X.shape[1]
         gradient = {}
-       # 1/m - из-за пакетной обработки(прогонка эпохи) -  усреднение
-        # 4. l - ошибка выходного слоя
-        gradient['dZ2'] = (forwardPass['A2'] - y) # ошибка
-        
 
-        # 5. Z2 - суммирование без активации
-        # 3.вычисление  локального градиента
-        delta = gradient['dZ2'] * self.dSigmoid(forwardPass['Z2'])
-        # 2. dW - высчитывание изменения веса без скорости обучения
-        gradient['dW2'] =  (1. / m) * np.matmul(delta, forwardPass['A1'].T) # A1 - выход предыдущего слоя(у(l-1))
+        gradient['dZ2'] = (forwardPass['A2'] - y)
+        delta = gradient['dZ2'] * dSigmoid(forwardPass['Z2'])
+
+        gradient['dW2'] =  (1. / m) * np.matmul(delta, forwardPass['A1'].T)
         gradient['db2'] =  (1. / m) * np.sum(delta, axis=1, keepdims=True) 
         
-
-
-
-        # 4. - вычисление ошибки( сумма локального градиента на веса следующего слоя)  
         gradient['dA1'] =  np.matmul(self.params['W2'].T, delta)
-        
-        if (epoch == 299):
+        if (epoch == 290):
             print('Ошибка: ', gradient['dA1'])
-        # 3. локальный градиент
-        gradient['dZ1'] = gradient['dA1'] * self.dSigmoid(forwardPass['Z1'])
-        # 2.
+
+        gradient['dZ1'] = gradient['dA1'] * dSigmoid(forwardPass['Z1'])
+
         gradient['dW1'] =(1. / m) * np.matmul(gradient['dZ1'], X.T)
         gradient['db1'] =(1. / m) * np.sum(gradient['dZ1'])
 
@@ -127,3 +52,44 @@ class MultiPerceptron():
         updatedParams['W1'] = self.params['W1'] - self.eta * grad['dW1']
         updatedParams['b1'] = self.params['b1'] - self.eta * grad['db1']
         return updatedParams
+
+    def train(self, X_train, y_train, X_test, y_test):
+        stab_time = 0
+        error_pred = 10**9
+        i = 0
+        while stab_time < 10 and i < self.epoch:
+            idx = np.random.permutation(X_train.shape[1])[:self.m]
+            X = X_train[:, idx]
+            y = y_train[:, idx]
+            
+            forwardPass = self.forward(X)
+            gradient = self.back(X, y, forwardPass, i)
+            self.params = self.updater(gradient)
+
+            if i % 10 == 0:
+                print("\tЭпоха " + str(i))
+            
+            i += 1
+            if i > 100:
+                y_net_test = self.forward(X_test)['A2']
+                error = np.sum(np.abs(y_net_test - y_test))
+                
+                if error >= error_pred:
+                    stab_time += 1
+                else:
+                    stab_time = 0
+                
+                error_pred = error
+
+#TEST
+    def test(self, X_test, y_test):
+        Z1 = np.matmul(self.params['W1'], X_test) + self.params['b1']
+        A1 = sigmoid(Z1)
+        Z2 = np.matmul(self.params['W2'], A1) + self.params['b2']
+        A2 = sigmoid(Z2)
+        pred = np.argmax(A2, axis=0)
+
+        accuracy = sum(pred == y_test) * 1 / len(y_test) * 100
+        print('\tТочность: ' + str(round(accuracy, 2)) + '%')
+
+        return pred
