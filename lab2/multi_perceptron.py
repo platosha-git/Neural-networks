@@ -28,6 +28,7 @@ class MultiPerceptron():
         m = X.shape[1]
         gradient = {}
 
+        #Ошибка Е
         gradient['dZ2'] = (forwardPass['A2'] - y)
         delta = gradient['dZ2'] * dSigmoid(forwardPass['Z2'])
 
@@ -46,12 +47,10 @@ class MultiPerceptron():
         return gradient
 
     def updater(self, grad):
-        updatedParams = {}
-        updatedParams['W2'] = self.params['W2'] - self.eta * grad['dW2']
-        updatedParams['b2'] = self.params['b2'] - self.eta * grad['db2']
-        updatedParams['W1'] = self.params['W1'] - self.eta * grad['dW1']
-        updatedParams['b1'] = self.params['b1'] - self.eta * grad['db1']
-        return updatedParams
+        self.params['W2'] -= self.eta * grad['dW2']
+        self.params['b2'] -= self.eta * grad['db2']
+        self.params['W1'] -= self.eta * grad['dW1']
+        self.params['b1'] -= self.eta * grad['db1']
 
     def train(self, X_train, y_train, X_test, y_test):
         stab_time = 0
@@ -64,7 +63,7 @@ class MultiPerceptron():
             
             forwardPass = self.forward(X)
             gradient = self.back(X, y, forwardPass, i)
-            self.params = self.updater(gradient)
+            self.updater(gradient)
 
             if i % 10 == 0:
                 print("\tЭпоха " + str(i))
@@ -91,5 +90,3 @@ class MultiPerceptron():
 
         accuracy = sum(pred == y_test) * 1 / len(y_test) * 100
         print('\tТочность: ' + str(round(accuracy, 2)) + '%')
-
-        return pred

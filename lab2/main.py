@@ -14,7 +14,7 @@ def main():
     m_per.train(X_train, y_train, X_test, y_test)
 
     print('\nТестирование:')
-    y_answer = m_per.test(X_test, y_test)
+    m_per.test(X_test, y_test)
 
 
 if __name__ == '__main__':
