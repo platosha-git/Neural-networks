@@ -16,3 +16,18 @@ def sigmoid(z):
 
 def dSigmoid(z):
     return sigmoid(z) * (1 - sigmoid(z))
+
+
+def tanh(z):
+    return np.tanh(z)
+
+def dTanh(z):
+    return 1 / (np.cosh(z)**2)
+
+
+def ReLU(z):
+    return np.maximum(0,z)
+
+def dReLU(z):
+    return (z > 0) * 1
+

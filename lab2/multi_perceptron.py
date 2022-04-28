@@ -30,19 +30,20 @@ class MultiPerceptron():
 
         #Ошибка Е
         gradient['dZ2'] = (forwardPass['A2'] - y)
+        #delta = E * fi(z)
         delta = gradient['dZ2'] * dSigmoid(forwardPass['Z2'])
 
         gradient['dW2'] =  (1. / m) * np.matmul(delta, forwardPass['A1'].T)
         gradient['db2'] =  (1. / m) * np.sum(delta, axis=1, keepdims=True) 
         
         gradient['dA1'] =  np.matmul(self.params['W2'].T, delta)
-        if (epoch == 290):
+        if (epoch == self.epoch - 1):
             print('Ошибка: ', gradient['dA1'])
 
         gradient['dZ1'] = gradient['dA1'] * dSigmoid(forwardPass['Z1'])
 
-        gradient['dW1'] =(1. / m) * np.matmul(gradient['dZ1'], X.T)
-        gradient['db1'] =(1. / m) * np.sum(gradient['dZ1'])
+        gradient['dW1'] = (1. / m) * np.matmul(gradient['dZ1'], X.T)
+        gradient['db1'] = (1. / m) * np.sum(gradient['dZ1'])
 
         return gradient
 
