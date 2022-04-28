@@ -56,9 +56,9 @@ class ANeuron():
         bias = 0
         for weight in self.input_weights:
             if weight > 0:
-                bias += 1
+                bias += 0.75
             if weight < 0:
-                bias -= 1
+                bias -= 0.75
         return bias
 
     def get_weights(self, count):

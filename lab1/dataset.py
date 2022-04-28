@@ -2,7 +2,7 @@ import gzip
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
-A_SIZE = 500
+A_SIZE = 5000
 
 SIZE_OF_ONE_IMAGE = 28 ** 2
 NUM_OF_COUNTS = 10

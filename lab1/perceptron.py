@@ -69,7 +69,7 @@ class Perceptron:
 
         for i, neuron in enumerate(all_neurons):
             zeros = neuron.count(0)
-            if zeros == 0 or zeros == len_x:
+            if zeros == 0:
                 dead_neurons[i] = True
         return dead_neurons
 
